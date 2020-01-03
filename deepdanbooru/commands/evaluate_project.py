@@ -29,23 +29,9 @@ def evaluate_project(project_path, target_path, threshold):
     height = project_context['image_height']
 
     for image_path in taget_image_paths:
-        image = dd.data.load_image_for_evaluate(
-            image_path, width=width, height=height)
-
-        image_shape = image.shape
-        # image = image.astype(np.float16)
-        image = image.reshape(
-            (1, image_shape[0], image_shape[1], image_shape[2]))
-        y = model.predict(image)[0]
-
-        result_dict = {}
-
-        for i, tag in enumerate(tags):
-            result_dict[tag] = y[i]
-
         print(f'Tags of {image_path}:')
-        for tag in tags:
-            if result_dict[tag] >= threshold:
-                print(f'({result_dict[tag]:05.3f}) {tag}')
+        for tag, score in dd.redistribution.evaluate_image(
+                image_path, model, tags, threshold, width, height):
+            print(f'({score:05.3f}) {tag}')
 
         print()

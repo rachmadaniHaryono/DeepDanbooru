@@ -6,47 +6,19 @@ import numpy as np
 import skimage.transform
 import tensorflow as tf
 
+import deepdanbooru as dd
+
 THRESHOLD = 0.5
-
-
-def transform_and_pad_image(image, target_width, target_height):
-    image_width = image.shape[1]
-    image_height = image.shape[0]
-    image_array = image
-
-    # centerize
-    t = skimage.transform.AffineTransform(
-        translation=(-image_width * 0.5, -image_height * 0.5))
-
-    t += skimage.transform.AffineTransform(
-        translation=(target_width * 0.5, target_height * 0.5))
-
-    warp_shape = (target_height, target_width)
-
-    image_array = skimage.transform.warp(
-        image_array, (t).inverse, output_shape=warp_shape, order=1, mode='edge')
-
-    return image_array
-
-
-def prepare_image(path):
-    image_raw = tf.io.read_file(path)
-    image = tf.io.decode_png(image_raw, channels=3)
-
-    image = tf.image.resize(image, size=(
-        299, 299), method=tf.image.ResizeMethod.AREA, preserve_aspect_ratio=True)
-    image = image.numpy()
-    image = transform_and_pad_image(image, 299, 299)
-    image = image / 255.0
-
-    return image
+WIDTH = 299
+HEIGHT = 299
 
 
 def evaluate_image(
-    image_path: str, model: Any, tags: List[str], threshold: float = THRESHOLD
+    image_path: str, model: Any, tags: List[str], threshold: float = THRESHOLD,
+    width: int = WIDTH, height: int = HEIGHT
 ) -> Iterator[Tuple[str, float]]:
     print('Loading image ...')
-    image = prepare_image(image_path)
+    image = dd.data.load_image_for_evaluate(image_path, width, height)
     image_shape = image.shape
     image = image.reshape(
         (1, image_shape[0], image_shape[1], image_shape[2]))
@@ -110,7 +82,7 @@ if __name__ == '__main__':
     model = tf.keras.models.load_model(args.model)
 
     print('Loading image ...')
-    image = prepare_image(args.image_path)
+    image = dd.data.load_image_for_evaluate(args.image_path, WIDTH, HEIGHT)
     image_shape = image.shape
     image = image.reshape(
         (1, image_shape[0], image_shape[1], image_shape[2]))
