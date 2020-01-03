@@ -81,25 +81,11 @@ if __name__ == '__main__':
     print('Loading model ...')
     model = tf.keras.models.load_model(args.model)
 
-    print('Loading image ...')
-    image = dd.data.load_image_for_evaluate(args.image_path, WIDTH, HEIGHT)
-    image_shape = image.shape
-    image = image.reshape(
-        (1, image_shape[0], image_shape[1], image_shape[2]))
-
     print('Loading tags ...')
     with open(args.tags, 'r') as stream:
         tags = [tag for tag in (tag.strip() for tag in stream) if tag]
 
-    print('Evaluating ...')
-    y = model.predict(image)[0]
-
-    result_dict = {}
-
-    for i, tag in enumerate(tags):
-        result_dict[tag] = y[i]
-
     print(f'Tags of {args.image_path}:')
-    for tag in tags:
-        if result_dict[tag] >= args.threshold:
-            print(f'({result_dict[tag]:05.3f}) {tag}')
+    for tag, score in evaluate_image(
+            args.image_path, model, tags, args.threshold, WIDTH, HEIGHT):
+        print(f'({score:05.3f}) {tag}')
