@@ -1,0 +1,22 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: trailing-whitespace
+    exclude: deepdanbooru/project/project.py
+  - id: end-of-file-fixer
+    exclude: repeat-run.bat
+  - id: check-yaml
+  - id: check-added-large-files
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.2.0
+  hooks:
+  - id: pretty-format-yaml
+    args: [--autofix]
+    exclude: .travis.yml
+- repo: https://github.com/psf/black
+  rev: 21.12b0
+  hooks:
+  - id: black
