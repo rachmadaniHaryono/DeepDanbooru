@@ -29,6 +29,7 @@ def packages():
         return f.read().splitlines()
 
 
+@pytest.mark.xfail(reason="should load from file instead using import")
 def test_package_setup(packages):
     import setuptools
 
