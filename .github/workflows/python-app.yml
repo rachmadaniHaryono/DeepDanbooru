@@ -39,7 +39,9 @@ jobs:
         python get-poetry.py -y
         echo "$HOME/.poetry/bin" >> $GITHUB_PATH
     - name: Install dependencies
-      run: poetry install --no-interaction
+      run: |
+        apt install libhdf5-dev
+        poetry install --no-interaction
     - name: Test with pytest
       run: |
         poetry run pytest
