@@ -1,0 +1,23 @@
+[tool]
+[tool.poetry]
+name = "deepdanbooru"
+version = "1.0.0"
+description = "DeepDanbooru is AI based multi-label girl image classification system, implemented by using TensorFlow."
+classifiers = ["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent"]
+homepage = "https://github.com/KichangKim/DeepDanbooru"
+authors = ["Kichang Kim <admin@kanotype.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.6"
+click = ">=7.0"
+numpy = ">=1.16.2"
+requests = ">=2.22.0"
+scikit-image = ">=0.15.0"
+six = ">=1.13.0"
+tensorflow = {version = ">=2.3.1", extras = ["tensorflow"]}
+
+[tool.poetry.dev-dependencies]
+flake8 = "*"
+pytest = "^6.2.5"
+mypy = "^0.930"
