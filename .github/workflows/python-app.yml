@@ -1,5 +1,8 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+#
+# poetry config
+# https://github.com/python-poetry/poetry/issues/366#issuecomment-691412462
 
 name: Python application
 
@@ -23,18 +26,23 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Set up Poetry cache for Python dependencies
+      uses: actions/cache@v2
+      if: startsWith(runner.os, 'Linux')
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: ${{ runner.os }}-poetry-
+    - name: Install Poetry
       run: |
-        python -m pip install --upgrade pip
-        # upgrade setuptools
-        # https://stackoverflow.com/a/60731060/1766261
-        pip install setuptools>=42.0.0
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install .
+        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py
+        python get-poetry.py -y
+        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+    - name: Install dependencies
+      run: poetry install --no-interaction
     - name: Test with pytest
       run: |
-        pytest
+        poetry run pytest
     - name: Test program version
       run: |
         python setup.py --version
