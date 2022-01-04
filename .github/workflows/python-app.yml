@@ -23,6 +23,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        # upgrade setuptools
+        # https://stackoverflow.com/a/60731060/1766261
+        pip install setuptools>=42.0.0
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
